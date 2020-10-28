@@ -1,6 +1,6 @@
 //#region # 버전 관리 및 업데이트 날짜
-let UpdateVersion = '(Ver 1.0.1)';
-let UpdateDate = '[lastUpdate : 2020-10-16]';
+let UpdateVersion = '(Ver 1.0.3)';
+let UpdateDate = '[lastUpdate : 2020-10-20]';
 
 //#region # 일반 명령어 정리
 
@@ -15,6 +15,10 @@ let NormalCommandList = '[기본 명령어]\n'
 //#region # 구독 관련 명령어 정리
 
 let SubscribeCommandList = '[구독 관련 명령어]\n'
++ '-----------------------------------\n'
++ '* 해당  기능은  단톡방에서\n'
++ '* 사용   불가능해요.\n'
++ '-----------------------------------\n'
 + '1. 구독 (단톡방인 경우 구독 한 번만 가능)\n'
 + '예시) /구독\n'
 + '2. 구독취소\n'
@@ -28,6 +32,14 @@ let SubscribeCommandList = '[구독 관련 명령어]\n'
 
 //#endregion
 
+//#region # 기타 기능 명령어 정리
+
+let ETCCommandList = '[기타 명령어]\n'
++ '1. 로또 번호 추출\n'
++ '예시) /로또추첨';
+
+//#endregion
+
 function returnCommandList() {
     let wholeCommand = '*********************************\n'
     + '둥봇에게 사용 가능한 명령어\n'
@@ -35,6 +47,7 @@ function returnCommandList() {
     + '*********************************\n\n'
     + NormalCommandList + '\n\n'
     + SubscribeCommandList + '\n\n'
+    + ETCCommandList + '\n\n'
     + UpdateDate;
 
     return wholeCommand;

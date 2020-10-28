@@ -336,10 +336,28 @@ app.post('/subscribe/list', (req, res) => {
 
 });
 
+// [구독] 날씨
+app.post('/subscribe/weather', (req, res) => {
+	res.status(200).json(
+		{
+			"Message": "날씨 구독기능은 개발중이에요 (찡긋)"
+		}
+	);
+});
+
 // [구독] 코로나
 app.post('/subscribe/covid19', (req, res) => {
 
 	var from = req.body.From;
+	console.log(from + "의 코로나 구독기능 요청")
+
+	GetCovid19Info().then(function(resultMessage) {
+		res.status(200).json(
+			{
+				"Message": resultMessage
+			}
+		)
+	});
 
 });
 
@@ -351,6 +369,7 @@ app.get('/getRequest', (req, res) => {
 	// 명령어 가져오기
 	let command = req.query.command
 	let from = req.query.from
+	let room = req.query.room
 	
 	let param1 = req.query.param1
 	let param2 = req.query.param2
@@ -408,114 +427,178 @@ app.get('/getRequest', (req, res) => {
 
 		// 구독 기능 추가
 		if (param1 == "기능") {
-			if (param2 == "날씨") {
-				SubscribeUpsert(from, from, 'Y', 'S').then(function(resultMessage) {
-					if (resultMessage == "Error") {
-						subscribeMessage += "날씨 알림 기능 추가 실패";
-					} else if (resultMessage == "Success") {
-						subscribeMessage += "날씨 알림 기능 추가 완료";
-					}
-
-					res.status(200).json(
-						{
-							"Message": subscribeMessage
-						}
-					);
-				});
-			}
-			else if (param2 == "코로나") {
-				SubscribeUpsert(from, from, 'S', 'Y').then(function(resultMessage) {
-					if (resultMessage == "Error") {
-						subscribeMessage += "코로나 알림 기능 추가 실패";
-					} else if (resultMessage == "Success") {
-						subscribeMessage += "코로나 알림 기능 추가 완료";
-					}
-
-					res.status(200).json(
-						{
-							"Message": subscribeMessage
-						}
-					);
-				});
-			}
-			else if (param2 == "?") {
-				var result = '[구독 가능한 기능 리스트]\n';
-
-				for (var idx in SubscribeCommand) {
-					result += ((Number(idx) + 1) + '. ' + SubscribeCommand[idx].Function_Kor + '\n');
-				}
+			if (param3 == "room") {
+				subscribeMessage += "단톡방에서는 관리자만 구독할 수 있어요.\n";
+				subscribeMessage += "우리 좀 더 친해지면\n";
+				subscribeMessage += "카톡친추해요~(뽀뽀)(뽀뽀)(뽀뽀)";
 
 				res.status(200).json(
 					{
-						"Message": result
+						"Message": subscribeMessage
 					}
 				);
 			}
 			else {
-				var result = '[구독 가능한 기능 리스트]\n';
-
-				for (var idx in SubscribeCommand) {
-					result += ((Number(idx) + 1) + '. ' + SubscribeCommand[idx].Function_Kor + '\n');
+				if (param2 == "날씨") {
+					SubscribeUpsert(from, from, 'Y', 'S').then(function(resultMessage) {
+						if (resultMessage == "Error") {
+							subscribeMessage += "날씨 알림 기능 추가 실패";
+						} else if (resultMessage == "Success") {
+							subscribeMessage += "날씨 알림 기능 추가 완료";
+						}
+	
+						res.status(200).json(
+							{
+								"Message": subscribeMessage
+							}
+						);
+					});
 				}
-
-				res.status(200).json(
-					{
-						"Message": result
+				else if (param2 == "코로나") {
+					SubscribeUpsert(from, from, 'S', 'Y').then(function(resultMessage) {
+						if (resultMessage == "Error") {
+							subscribeMessage += "코로나 알림 기능 추가 실패";
+						} else if (resultMessage == "Success") {
+							subscribeMessage += "코로나 알림 기능 추가 완료";
+						}
+	
+						res.status(200).json(
+							{
+								"Message": subscribeMessage
+							}
+						);
+					});
+				}
+				else if (param2 == "?") {
+					var result = '[구독 가능한 기능 리스트]\n';
+	
+					for (var idx in SubscribeCommand) {
+						result += ((Number(idx) + 1) + '. ' + SubscribeCommand[idx].Function_Kor + '\n');
 					}
-				);
+	
+					res.status(200).json(
+						{
+							"Message": result
+						}
+					);
+				}
+				else {
+					var result = '[구독 가능한 기능 리스트]\n';
+	
+					for (var idx in SubscribeCommand) {
+						result += ((Number(idx) + 1) + '. ' + SubscribeCommand[idx].Function_Kor + '\n');
+					}
+	
+					res.status(200).json(
+						{
+							"Message": result
+						}
+					);
+				}
 			}
 		}
 
 		// 구독 기능 취소
 		else if (param1 == "기능취소")  {
-			if (param2 == "날씨") {
-				SubscribeUpsert(from, from, 'N', 'S').then(function(resultMessage) {
-					if (resultMessage == "Error") {
-						subscribeMessage += "날씨 알림 기능 취소 실패";
-					} else if (resultMessage == "Success") {
-						subscribeMessage += "날씨 알림 기능 취소 완료";
-					}
-
-					res.status(200).json(
-						{
-							"Message": subscribeMessage
-						}
-					);
-				});
-			}
-			else if (param2 == "코로나") {
-				SubscribeUpsert(from, from, 'S', 'N').then(function(resultMessage) {
-					if (resultMessage == "Error") {
-						subscribeMessage += "코로나 알림 기능 취소 실패";
-					} else if (resultMessage == "Success") {
-						subscribeMessage += "코로나 알림 기능 취소 완료";
-					}
-
-					res.status(200).json(
-						{
-							"Message": subscribeMessage
-						}
-					);
-				});
-			}
-			else {
-				var result = '[구독 가능한 기능 리스트]\n';
-
-				for (var idx in SubscribeCommand) {
-					result += ((Number(idx) + 1) + '. ' + SubscribeCommand[idx].Function_Kor + '\n');
-				}
+			if (param3 == "room") {
+				subscribeMessage += "단톡방에서는 관리자만 구독할 수 있어요.\n";
+				subscribeMessage += "우리 좀 더 친해지면\n";
+				subscribeMessage += "카톡친추해요~(뽀뽀)(뽀뽀)(뽀뽀)";
 
 				res.status(200).json(
 					{
-						"Message": result
+						"Message": subscribeMessage
 					}
 				);
+			}
+			else {
+				if (param2 == "날씨") {
+					SubscribeUpsert(from, from, 'N', 'S').then(function(resultMessage) {
+						if (resultMessage == "Error") {
+							subscribeMessage += "날씨 알림 기능 취소 실패";
+						} else if (resultMessage == "Success") {
+							subscribeMessage += "날씨 알림 기능 취소 완료";
+						}
+	
+						res.status(200).json(
+							{
+								"Message": subscribeMessage
+							}
+						);
+					});
+				}
+				else if (param2 == "코로나") {
+					SubscribeUpsert(from, from, 'S', 'N').then(function(resultMessage) {
+						if (resultMessage == "Error") {
+							subscribeMessage += "코로나 알림 기능 취소 실패";
+						} else if (resultMessage == "Success") {
+							subscribeMessage += "코로나 알림 기능 취소 완료";
+						}
+	
+						res.status(200).json(
+							{
+								"Message": subscribeMessage
+							}
+						);
+					});
+				}
+				else {
+					var result = '[구독 가능한 기능 리스트]\n';
+	
+					for (var idx in SubscribeCommand) {
+						result += ((Number(idx) + 1) + '. ' + SubscribeCommand[idx].Function_Kor + '\n');
+					}
+	
+					res.status(200).json(
+						{
+							"Message": result
+						}
+					);
+				}
 			}
 		}
 
 		// 구독 관련 명령어 출력
 		else if (param1 == "?") {
 			// 코드 입력
+		}
+
+		// 관리자 구독
+		else if (param1 == "admin") {
+			if (param3 == "admin") {
+				subscribeMessage += "관리자 구독 실행 완료!!";
+			}
+			else if (param3 == "notadmin") {
+				subscribeMessage += "관리자가 아닙니다.\n";
+				subscribeMessage += "관리자 구독 실패!!";
+			}
+
+			res.status(200).json(
+				{
+					"Message": subscribeMessage
+				}
+			);
+		}
+
+		// 단톡방에서 구독
+		else if (param1 == "단톡") {
+			if (param3 == "admin") {
+				subscribeMessage += room + "\n";
+				subscribeMessage += "구독 완료!!";
+			}
+			else if (param3 == "notroom") {
+				subscribeMessage += "개인에게는 이 기능은 사용할 수 없어요\n";
+				subscribeMessage += "[/구독] 이 명령어를 이용해보세요(뽀뽀)";
+			}
+			else if (param3 == "notadmin") {
+				subscribeMessage += "단톡방을 구독시키는건 주인님밖에 못해요!!";
+			}
+
+			res.status(200).json(
+				{
+					"Message": subscribeMessage
+				}
+			);
 		}
 
 		else if (param1 == ""){
@@ -552,6 +635,18 @@ app.get('/getRequest', (req, res) => {
 				subscribeMessage += "< /구독 닉네임 [닉네임입력] > \n";
 				subscribeMessage += "다음 명령어를 이용하여 다시 구독해주세요.";
 				subscribeMessage += "\n\n 사실 다음 명령어 아직 안만들었어요 기다려주세요.(찡긋)(찡긋)(찡긋)";
+
+				res.status(200).json(
+					{
+						"Message": subscribeMessage
+					}
+				);
+			}
+			// 단톡방에서 구독누른 경우
+			else if (param3 == "room") {
+				subscribeMessage += "단톡방에서는 관리자만 구독할 수 있어요.\n";
+				subscribeMessage += "우리 좀 더 친해지면\n";
+				subscribeMessage += "카톡친추해요~(뽀뽀)(뽀뽀)(뽀뽀)";
 
 				res.status(200).json(
 					{
@@ -605,6 +700,18 @@ app.get('/getRequest', (req, res) => {
 					"Message": cancelSubscribeMessage
 				}
 			);
+		}
+		else if (param3 == "admin") {
+			SubscribeDelete(from).then(function(resultMessage) {
+				cancelSubscribeMessage += "Admin 권한으로 삭제요청\n";
+				cancelSubscribeMessage += resultMessage;
+
+				res.status(200).json(
+					{
+						"Message": cancelSubscribeMessage
+					}
+				);	
+			});
 		}
 	}
 
@@ -682,6 +789,35 @@ app.get('/getRequest', (req, res) => {
 			}
 		);
 	}
+
+	//#region ## 기타기능
+
+	else if (command == "로또추첨") {
+		let lottoMessage = "[둥봇의 로또추첨]\n";
+		lottoMessage += param1 + "\n";
+		lottoMessage += "당첨되면 5% 떼줘요(뽀뽀)";
+
+		res.status(200).json(
+			{
+				"Message": lottoMessage
+			}
+		);
+	}
+
+	else if (command == "우리만난지") {
+		let anniversaryMessage = "[둥봇의 기념일계산]\n";
+		anniversaryMessage += "(축하)***********************\n";
+		anniversaryMessage += "우리가 만난지 " + param1 + "일째에요\n";
+		anniversaryMessage += "************************(하트)";
+
+		res.status(200).json(
+			{
+				"Message": anniversaryMessage
+			}
+		);
+	}
+
+	//#endregion
 
 	// 예시!!!
 	// CommandCheck(command).then(function(commandResult) {
