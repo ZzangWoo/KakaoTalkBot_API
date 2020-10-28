@@ -776,6 +776,22 @@ app.get('/getRequest', (req, res) => {
 		});
 	}
 
+	// 임포스터 (이벤트)
+	else if (command == "임포스터") {
+		let impostor = ". 　。　　　　•　 　ﾟ　　。 .\n"
+		+ "　　.　　　.　　　 　　.　　　　　。　　 。　.\n"
+		+ "　.　　 . 。　 ඞ 。　 . •\n"
+		+ "• . " + param1 + "님은(는) 임포스터였습니다.　。.\n"
+		+ "　 　　。　　　　　　ﾟ　　　.　　　　　.\n"　　
+		+ ",　　　　.　 .　　 . . .";
+
+		res.status(200).json(
+			{
+				"Message": impostor
+			}
+		);
+	}
+
 	//#endregion
 
 	//#endregion
