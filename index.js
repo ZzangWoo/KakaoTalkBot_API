@@ -702,7 +702,7 @@ app.get('/getRequest', (req, res) => {
 			);
 		}
 		else if (param3 == "admin") {
-			SubscribeDelete(from).then(function(resultMessage) {
+			SubscribeDelete(param1).then(function(resultMessage) {
 				cancelSubscribeMessage += "Admin 권한으로 삭제요청\n";
 				cancelSubscribeMessage += resultMessage;
 
