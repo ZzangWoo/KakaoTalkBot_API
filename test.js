@@ -17,13 +17,17 @@ var moment = require('moment');
 require('moment-timezone');
 moment.tz.setDefault("Asia/Seoul");
 
+// mssql 모듈 가져오기
+const sql = require('mssql');
+// DB 정보 가져오기
+const config = require('./Config/dbInfo');
+
 app.post('/gitTest', (req, res) => {
     let gitURL = req.body.gitURL;
 
     console.log("Git Commit Test API")
 
-    GetCommitStatus(gitURL).then(function(resultMessage) {
-        console.log("[결과]\n" + resultMessage);
+    CompareCommitStatus().then(function(resultMessage) {
         res.status(200).json(
             {
                 "Message": resultMessage
@@ -31,6 +35,70 @@ app.post('/gitTest', (req, res) => {
         );
     });
 })
+
+function CompareCommitStatus() {
+
+    let UserName = "야호";
+
+    return new Promise(function(resolve, reject) {
+        const connection = sql.connect(config, (err) => {
+            if (err) {
+                console.log("[DB 연동 실패]");
+                console.log(err);
+            } else {
+                console.log("[DB 연동 성공]");
+
+                const request = connection.request();
+                request.input('UserName', sql.NVarChar(50), UserName)
+                       .execute('GitCommitRoomSelectURL', (err, recordsets, returnValue) => {
+                           if (err) {
+                               console.log("[sp 접근 실패]");
+                               console.log(err);
+                           } else {
+                               console.log("[sp 접근 성공]");
+
+                               let GitURL = recordsets.recordset[0].GitURL;                                
+
+                               const getGitHtml = async () => {
+                                    try {
+                                        return await axios.get(GitURL);
+                                    } catch (error) {
+                                        console.error(error);
+                                    }
+                                };
+                        
+                                getGitHtml().then(html => {
+                                    const $ = cheerio.load(html.data);
+                                    const $bodyList = $("div.border.py-2.graph-before-activity-overview g").children("rect");
+                        
+                                    let list = {};
+                        
+                                    let today = moment().format('YYYY-MM-DD');
+                                    
+                                    $bodyList.each(function(i, elem) {
+                                        if (today == $(this).attr('data-date')) {
+                                            list = {
+                                                date: $(this).attr('data-date'),
+                                                count: $(this).attr('data-count')
+                                            };
+                                        }
+                                    });
+                        
+                                    let Message = "";
+                                    if (list.count > 0) {
+                                        Message = "인증 성공";
+                                    } else {
+                                        Message = "인증 실패";
+                                    }
+
+                                    resolve(Message);
+                                });
+                            }
+                       })
+            }
+        })
+    })
+}
 
 function GetCommitStatus(gitURL) {
 
