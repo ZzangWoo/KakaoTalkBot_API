@@ -27,7 +27,7 @@ app.post('/gitTest', (req, res) => {
 
     console.log("Git Commit Test API")
 
-    CompareCommitStatus().then(function(resultMessage) {
+    CompareCommitStatus("농부").then(function(resultMessage) {
         res.status(200).json(
             {
                 "Message": resultMessage
@@ -36,9 +36,7 @@ app.post('/gitTest', (req, res) => {
     });
 })
 
-function CompareCommitStatus() {
-
-    let UserName = "야호";
+function CompareCommitStatus(UserName) {
 
     return new Promise(function(resolve, reject) {
         const connection = sql.connect(config, (err) => {
@@ -57,7 +55,13 @@ function CompareCommitStatus() {
                            } else {
                                console.log("[sp 접근 성공]");
 
-                               let GitURL = recordsets.recordset[0].GitURL;                                
+                               if (recordsets.recordset.length == 0) {
+                                   console.log(recordsets)
+                                   resolve("[인증 실패]\n해당 아이디에 대한 Github Profile URL이 존재하지 않습니다.");
+                                   return;
+                               }
+
+                               let GitURL = recordsets.recordset[0].GitURL;
 
                                const getGitHtml = async () => {
                                     try {
@@ -84,14 +88,37 @@ function CompareCommitStatus() {
                                         }
                                     });
                         
+                                    console.log(list);
+
                                     let Message = "";
                                     if (list.count > 0) {
-                                        Message = "인증 성공";
-                                    } else {
-                                        Message = "인증 실패";
-                                    }
+                                        const logRequest = connection.request();
+                                        logRequest.input('UserName', sql.NVarChar(50), UserName)
+                                                  .execute('GitCommitLogInsert', (err, recordsets, returnValue) => {
+                                                      if (err) {
+                                                          console.log("[Git Log Insert 실패]");
+                                                          console.log(err);
+                                                      } else {
+                                                          console.log("[Git Log Insert 성공]");
 
-                                    resolve(Message);
+                                                          let logInsertResult = recordsets.recordset[0].Result;
+
+                                                          if (logInsertResult == "exist") {
+                                                              Message = "[인증 실패]\n";
+                                                              Message += "이미 인증했습니다.";                                                        
+                                                              resolve(Message);
+                                                          } else if (logInsertResult == "success") {
+                                                              Message = "[인증 성공]\n";
+                                                              Message += "오늘 하루도 수고하셨습니다.";
+                                                              resolve(Message);
+                                                          }
+                                                      }
+                                                  })
+                                    } else {
+                                        Message = "[인증 실패]\n";
+                                        Message += "단톡방에 등록한 GitHub Profile URL 및 Push가 제대로 되었는지 확인해주세요.";
+                                        resolve(Message);
+                                    }
                                 });
                             }
                        })

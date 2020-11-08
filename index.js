@@ -735,6 +735,24 @@ app.get('/getRequest', (req, res) => {
 
 	//#region ## 깃 허브 커밋 단톡방 관련 명령어
 
+	else if (command == "인증") {
+		if (room.indexOf('잔디') != -1) {
+			CompareCommitStatus(from).then(function(resultMessage) {
+				res.status(200).json(
+					{
+						"Message": resultMessage
+					}
+				);
+			})
+		} else {
+			res.status(200).json(
+				{
+					"Message": "해당 방에서는 사용할 수 없는 기능입니다."
+				}
+			);
+		}
+	}
+
 	//#endregion
 
 	//#region ### 특별 명령어
@@ -1175,6 +1193,99 @@ function SubscribeSelect() {
 //#endregion
 
 //#region # 깃 허브 커밋 단톡방 관련 메서드
+
+//#region ## 인증 확인 메서드
+function CompareCommitStatus(UserName) {
+
+    return new Promise(function(resolve, reject) {
+        const connection = sql.connect(config, (err) => {
+            if (err) {
+                console.log("[DB 연동 실패]");
+                console.log(err);
+            } else {
+                console.log("[DB 연동 성공]");
+
+                const request = connection.request();
+                request.input('UserName', sql.NVarChar(50), UserName)
+                       .execute('GitCommitRoomSelectURL', (err, recordsets, returnValue) => {
+                           if (err) {
+                               console.log("[sp 접근 실패]");
+                               console.log(err);
+                           } else {
+                               console.log("[sp 접근 성공]");
+
+                               if (recordsets.recordset.length == 0) {
+                                   console.log(recordsets)
+                                   resolve("[인증 실패]\n해당 아이디에 대한 Github Profile URL이 존재하지 않습니다.");
+                                   return;
+                               }
+
+                               let GitURL = recordsets.recordset[0].GitURL;
+
+                               const getGitHtml = async () => {
+                                    try {
+                                        return await axios.get(GitURL);
+                                    } catch (error) {
+                                        console.error(error);
+                                    }
+                                };
+                        
+                                getGitHtml().then(html => {
+                                    const $ = cheerio.load(html.data);
+                                    const $bodyList = $("div.border.py-2.graph-before-activity-overview g").children("rect");
+                        
+                                    let list = {};
+                        
+                                    let today = moment().format('YYYY-MM-DD');
+                                    
+                                    $bodyList.each(function(i, elem) {
+                                        if (today == $(this).attr('data-date')) {
+                                            list = {
+                                                date: $(this).attr('data-date'),
+                                                count: $(this).attr('data-count')
+                                            };
+                                        }
+                                    });
+                        
+                                    console.log(list);
+
+                                    let Message = "";
+                                    if (list.count > 0) {
+                                        const logRequest = connection.request();
+                                        logRequest.input('UserName', sql.NVarChar(50), UserName)
+                                                  .execute('GitCommitLogInsert', (err, recordsets, returnValue) => {
+                                                      if (err) {
+                                                          console.log("[Git Log Insert 실패]");
+                                                          console.log(err);
+                                                      } else {
+                                                          console.log("[Git Log Insert 성공]");
+
+                                                          let logInsertResult = recordsets.recordset[0].Result;
+
+                                                          if (logInsertResult == "exist") {
+                                                              Message = "[인증 실패]\n";
+                                                              Message += "이미 인증했습니다.";                                                        
+                                                              resolve(Message);
+                                                          } else if (logInsertResult == "success") {
+                                                              Message = "[인증 성공]\n";
+                                                              Message += "오늘 하루도 수고하셨습니다.";
+                                                              resolve(Message);
+                                                          }
+                                                      }
+                                                  })
+                                    } else {
+                                        Message = "[인증 실패]\n";
+                                        Message += "단톡방에 등록한 GitHub Profile URL 및 Push가 제대로 되었는지 확인해주세요.";
+                                        resolve(Message);
+                                    }
+                                });
+                            }
+                       })
+            }
+        })
+    })
+}
+//#endregion
 
 //#endregion
 
