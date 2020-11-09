@@ -27,17 +27,20 @@ app.post('/gitTest', (req, res) => {
 
     console.log("Git Commit Test API")
 
-<<<<<<< HEAD
-    CompareCommitStatus("몰래온손님").then(function(resultMessage) {
-=======
-    CompareCommitStatus("컴공돌이").then(function(resultMessage) {
->>>>>>> c80b2e9fa0e1512b9ebbf8bc7892df8bce2f85e6
-        res.status(200).json(
-            {
-                "Message": resultMessage
-            }
-        );
-    });
+    res.status(200).json(
+        {
+            "Message": new Date()
+        }
+    )
+
+    // CompareCommitStatus("몰래온손님").then(function(resultMessage) {
+
+    //     res.status(200).json(
+    //         {
+    //             "Message": resultMessage
+    //         }
+    //     );
+    // });
 })
 
 function GitCommitLogSelect(StartDate, EndDate) {

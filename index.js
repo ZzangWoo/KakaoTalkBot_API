@@ -11,6 +11,8 @@ let SubscribeCommand = [
 	}
 ];
 
+
+
 // API 생성을 위한 모듈 가져오기
 const express = require('express');
 const app = express();
@@ -825,15 +827,15 @@ app.get('/getRequest', (req, res) => {
 
 	//#endregion
 
-	else if (command == "테스트") {
-		console.log("테스트중")
+	// else if (command == "테스트") {
+	// 	console.log("테스트중")
 
-		res.status(200).json(
-			{
-				"Message": "구독자에게 메세지 보내기 테스트"
-			}
-		);
-	}
+	// 	res.status(200).json(
+	// 		{
+	// 			"Message": "구독자에게 메세지 보내기 테스트"
+	// 		}
+	// 	);
+	// }
 
 	//#region ## 기타기능
 
@@ -860,6 +862,15 @@ app.get('/getRequest', (req, res) => {
 				"Message": anniversaryMessage
 			}
 		);
+	}
+
+	else if (command == "시간테스트") {
+		process.env.TZ = 'Asia/Seoul';
+		res.status(200).json(
+			{
+				"Message": new Date()
+			}
+		)
 	}
 
 	//#endregion
