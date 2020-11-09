@@ -381,7 +381,7 @@ app.get('/getRequest', (req, res) => {
 	// 명령어 검색 사용
 	if (command == "명령어") {
 		console.log("사용 가능 명령어 정보 요청");
-		console.log("테스트 : " + returnCommandList());
+		console.log("방이름 : " + room);
 		res.status(200).json(
 			{
 				"Message": returnCommandList(room)

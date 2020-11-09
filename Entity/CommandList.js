@@ -56,15 +56,20 @@ let ETCCommandList = '[기타 명령어]\n'
 //#endregion
 
 function returnCommandList(room) {
+    console.log(room + '에서 명령어 호출');
     let wholeCommand = '*********************************\n'
     + '둥봇에게 사용 가능한 명령어\n'
     + UpdateVersion + '\n'
     + '*********************************\n\n'
     + NormalCommandList + '\n\n';
-    if (room.indexOf('잔디') != -1) {
-        wholeCommand += GitCommitRoomCommandList + '\n\n';
+    if (!room) {
+        wholeCommand += SubscribeCommandList + '\n\n';
     } else {
-        wholeCommand += + SubscribeCommandList + '\n\n';
+        if (room.indexOf('잔디') != -1) {
+            wholeCommand += GitCommitRoomCommandList + '\n\n';
+        } else {
+            wholeCommand += SubscribeCommandList + '\n\n';
+        }
     }
     
     wholeCommand += ''
