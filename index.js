@@ -382,7 +382,7 @@ app.get('/getRequest', (req, res) => {
 		console.log("테스트 : " + returnCommandList());
 		res.status(200).json(
 			{
-				"Message": returnCommandList()
+				"Message": returnCommandList(room)
 			}
 		);
 	}
@@ -735,6 +735,7 @@ app.get('/getRequest', (req, res) => {
 
 	//#region ## 깃 허브 커밋 단톡방 관련 명령어
 
+	//#region ### /인증 기능
 	else if (command == "인증") {
 		if (room.indexOf('잔디') != -1) {
 			CompareCommitStatus(from).then(function(resultMessage) {
@@ -751,6 +752,11 @@ app.get('/getRequest', (req, res) => {
 				}
 			);
 		}
+	}
+	//#endregion
+
+	else if (command == "인증확인") {
+
 	}
 
 	//#endregion
