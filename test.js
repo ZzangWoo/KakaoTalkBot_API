@@ -27,7 +27,11 @@ app.post('/gitTest', (req, res) => {
 
     console.log("Git Commit Test API")
 
+<<<<<<< HEAD
     CompareCommitStatus("몰래온손님").then(function(resultMessage) {
+=======
+    CompareCommitStatus("컴공돌이").then(function(resultMessage) {
+>>>>>>> c80b2e9fa0e1512b9ebbf8bc7892df8bce2f85e6
         res.status(200).json(
             {
                 "Message": resultMessage
@@ -80,6 +84,8 @@ function CompareCommitStatus(UserName) {
 
                                let GitURL = recordsets.recordset[0].GitURL;
 
+                               console.log("GitURL : " + GitURL);
+
                                const getGitHtml = async () => {
                                     try {
                                         return await axios.get(GitURL);
@@ -91,12 +97,15 @@ function CompareCommitStatus(UserName) {
                                 getGitHtml().then(html => {
                                     const $ = cheerio.load(html.data);
                                     const $bodyList = $("div.border.py-2.graph-before-activity-overview g").children("rect");
+                                    // const $bodyList = $("div.border.py-2.graph-before-activity-overview g").children("g").children("rect");
                         
                                     let list = {};
                         
                                     let today = moment().format('YYYY-MM-DD');
+                                    console.log("today : " + today);
                                     
                                     $bodyList.each(function(i, elem) {
+                                        console.log('data-date : ' + $(this).attr('data-date'));
                                         if (today == $(this).attr('data-date')) {
                                             list = {
                                                 date: $(this).attr('data-date'),

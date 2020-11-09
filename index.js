@@ -735,6 +735,7 @@ app.get('/getRequest', (req, res) => {
 
 	//#region ## 깃 허브 커밋 단톡방 관련 명령어
 
+
 	//#region ### /인증 기능
 	else if (command == "인증") {
 		if (room.indexOf('잔디') != -1) {
