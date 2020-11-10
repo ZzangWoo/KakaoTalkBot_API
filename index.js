@@ -1233,7 +1233,7 @@ function CompareCommitStatus(UserName) {
 
                                if (recordsets.recordset.length == 0) {
                                    console.log(recordsets)
-                                   resolve("[인증 실패]\n해당 아이디에 대한 Github Profile URL이 존재하지 않습니다.");
+                                   resolve("[인증 실패]\n" + UserName + "님의 아이디에 대한 Github Profile URL이 존재하지 않습니다.");
                                    return;
                                }
 
@@ -1285,19 +1285,19 @@ function CompareCommitStatus(UserName) {
                                                           let logInsertResult = recordsets.recordset[0].Result;
 
                                                           if (logInsertResult == "exist") {
-                                                              Message = "[인증 실패]\n";
-                                                              Message += "이미 인증했습니다.";                                                        
+															  Message = "[인증 실패]\n";
+															  Message += UserName + "님 이미 인증했어요.(씨익)(씨익)"
                                                               resolve(Message);
                                                           } else if (logInsertResult == "success") {
                                                               Message = "[인증 성공]\n";
-                                                              Message += "오늘 하루도 수고하셨습니다.";
+                                                              Message += UserName + "님 오늘 하루도 수고하셨어요.(뽀뽀)(뽀뽀)";
                                                               resolve(Message);
                                                           }
                                                       }
                                                   })
                                     } else {
                                         Message = "[인증 실패]\n";
-                                        Message += "단톡방에 등록한 GitHub Profile URL 및 Push가 제대로 되었는지 확인해주세요.";
+                                        Message += UserName + "님 단톡방에 등록한 GitHub Profile URL 및 Push가 제대로 되었는지 확인해주세요.";
                                         resolve(Message);
                                     }
                                 });
