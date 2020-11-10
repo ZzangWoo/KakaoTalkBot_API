@@ -29,7 +29,10 @@ app.post('/gitTest', (req, res) => {
 
     console.log("시간 : " + new Date());
 
-    CompareCommitStatus("태민").then(function(resultMessage) {
+    let StartDate = '2020-11-09';
+    let EndDate = '2020-11-10';
+
+    GitCommitLogSelect(StartDate, EndDate).then(function(resultMessage) {
         res.status(200).json(
             {
                 "Message": resultMessage
@@ -37,6 +40,7 @@ app.post('/gitTest', (req, res) => {
         )
     })
 })
+
 
 function GitCommitLogSelect(StartDate, EndDate) {
 
@@ -47,6 +51,35 @@ function GitCommitLogSelect(StartDate, EndDate) {
                 console.log(err);
             } else {
                 console.log("[DB 연동 성공]");
+
+                const request = connection.request();
+                request.input('StartDate', sql.NVarChar(50), StartDate)
+                       .input('EndDate', sql.NVarChar(50), EndDate)
+                       .execute('GitCommitLogSelect', (err, recordsets, returnValue) => {
+                           if (err) {
+                               console.log('[sp 접근 실패]');
+                               console.log(err);
+                           } else {
+                               console.log("psp 접근 성공]");
+
+                               if (recordsets.recordset.length == 0) {
+                                   console.log(recordsets);
+                                   resolve("[검색 실패]\n해당 기간에는 인증 데이터가 없어요");
+                                   return;
+                               }
+
+                               let resultMessage = '';
+
+                               for (var idx in recordsets.recordset) {
+                                   resultMessage += '닉네임 : ' + recordsets.recordset[idx].UserName + '\n';
+                                   resultMessage += '인증시간 : ' + recordsets.recordset[idx].CertifiedDate + '\n\n';
+                               }
+
+                               console.log(recordsets.recordset);
+
+                               resolve(resultMessage)
+                           }
+                       });
             }
         });
     });
@@ -74,36 +107,20 @@ function CompareCommitStatus(UserName) {
 
                                if (recordsets.recordset.length == 0) {
                                    console.log(recordsets)
-                                   resolve("[인증 실패]\n해당 아이디에 대한 Github Profile URL이 존재하지 않습니다.");
+                                   resolve("[인증 실패]\n" + UserName + "님의 아이디에 대한 Github Profile URL이 존재하지 않습니다.");
                                    return;
                                }
 
                                let GitURL = recordsets.recordset[0].GitURL;
 
-                               console.log("GitURL : " + GitURL);
-
                                const getGitHtml = async () => {
                                     try {
-                                        let options = {
-                                            method: 'GET',
-                                            url: GitURL,
-                                            headers: {
-                                                'Accept': 'application/json',
-                                                'Content-Type': 'application/json;charset=UTF-8',
-                                                'Set-Cookie': 'tz=Asia%2FSeoul'
-                                            },
-                                            withCredentials: true
-                                        }
-
-                                        // return await axios(options);
-
                                         return await axios.get(GitURL, {
-                                            header: {
-                                                'Set-Cookie': "tz=Asia%2FSeoul"
-                                            }}, {
-                                                withCredentials: true
-                                            
-                                        });
+											headers: {
+												'Set-Cookie': 'tz=Asia%2FSeoul'
+											}}, {
+												withCredentials: true											
+										});
                                     } catch (error) {
                                         console.error(error);
                                     }
@@ -112,17 +129,12 @@ function CompareCommitStatus(UserName) {
                                 getGitHtml().then(html => {
                                     const $ = cheerio.load(html.data);
                                     const $bodyList = $("div.border.py-2.graph-before-activity-overview g").children("rect");
-                                    // const $bodyList = $("div.border.py-2.graph-before-activity-overview g").children("g").children("rect");
                         
                                     let list = {};
                         
                                     let today = moment().format('YYYY-MM-DD');
-                                    console.log("today : " + today);
                                     
-                                    // console.log($bodyList);
-
                                     $bodyList.each(function(i, elem) {
-                                        // console.log('data-date : ' + $(this).attr('data-date'));
                                         if (today == $(this).attr('data-date')) {
                                             list = {
                                                 date: $(this).attr('data-date'),
@@ -147,19 +159,19 @@ function CompareCommitStatus(UserName) {
                                                           let logInsertResult = recordsets.recordset[0].Result;
 
                                                           if (logInsertResult == "exist") {
-                                                              Message = "[인증 실패]\n";
-                                                              Message += "이미 인증했습니다.";                                                        
+															  Message = "[인증 실패]\n";
+															  Message += UserName + "님 이미 인증했어요.(씨익)(씨익)"
                                                               resolve(Message);
                                                           } else if (logInsertResult == "success") {
                                                               Message = "[인증 성공]\n";
-                                                              Message += "오늘 하루도 수고하셨습니다.";
+                                                              Message += UserName + "님 오늘 하루도 수고하셨어요.(뽀뽀)(뽀뽀)";
                                                               resolve(Message);
                                                           }
                                                       }
                                                   })
                                     } else {
                                         Message = "[인증 실패]\n";
-                                        Message += "단톡방에 등록한 GitHub Profile URL 및 Push가 제대로 되었는지 확인해주세요.";
+                                        Message += UserName + "님 단톡방에 등록한 GitHub Profile URL 및 Push가 제대로 되었는지 확인해주세요.";
                                         resolve(Message);
                                     }
                                 });

@@ -758,7 +758,31 @@ app.get('/getRequest', (req, res) => {
 	//#endregion
 
 	else if (command == "인증확인") {
-
+		if (room.indexOf('잔디') != -1) {
+			if (param1 && param2) {
+				GitCommitLogSelect('', '').then(function(resultMessage) {
+					res.status(200).json(
+						{
+							"Message": resultMessage
+						}
+					);
+				})
+			} else {
+				GitCommitLogSelect(param1, param2).then(function(resultMessage) {
+					res.status(200).json(
+						{
+							"Message": resultMessage
+						}
+					);
+				})
+			}
+		} else {
+			res.status(200).json(
+				{
+					"Message": "해당 방에서는 사용할 수 없는 기능입니다."
+				}
+			);
+		}
 	}
 
 	//#endregion
@@ -1209,7 +1233,7 @@ function SubscribeSelect() {
 
 //#endregion
 
-//#region # 깃 허브 커밋 단톡방 관련 메서드
+//#region # 깃 허브 커밋 단톡방 관련 메서드 (잔디)
 
 //#region ## 인증 확인 메서드
 function CompareCommitStatus(UserName) {
@@ -1307,6 +1331,54 @@ function CompareCommitStatus(UserName) {
         })
     })
 }
+//#endregion
+
+//#region ## 인증 리스트 SELECT 메서드
+
+function GitCommitLogSelect(StartDate, EndDate) {
+
+    return new Promise(function(resolve, reject) {
+        const connection = sql.connect(config, (err) => {
+            if (err) {
+                console.log("[DB 연동 실패]");
+                console.log(err);
+            } else {
+                console.log("[DB 연동 성공]");
+
+                const request = connection.request();
+                request.input('StartDate', sql.NVarChar(50), StartDate)
+                       .input('EndDate', sql.NVarChar(50), EndDate)
+                       .execute('GitCommitLogSelect', (err, recordsets, returnValue) => {
+                           if (err) {
+                               console.log('[sp 접근 실패]');
+                               console.log(err);
+                           } else {
+                               console.log("psp 접근 성공]");
+
+                               if (recordsets.recordset.length == 0) {
+                                   console.log(recordsets);
+                                   resolve("[검색 실패]\n해당 기간에는 인증 데이터가 없어요");
+                                   return;
+                               }
+
+                               let resultMessage = '';
+
+                               for (var idx in recordsets.recordset) {
+                                   resultMessage += '닉네임 : ' + recordsets.recordset[idx].UserName + '\n';
+                                   resultMessage += '인증시간 : ' + recordsets.recordset[idx].CertifiedDate + '\n\n';
+                               }
+
+                               console.log(recordsets.recordset);
+
+                               resolve(resultMessage)
+                           }
+                       });
+            }
+        });
+    });
+
+}
+
 //#endregion
 
 //#endregion
