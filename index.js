@@ -1241,7 +1241,12 @@ function CompareCommitStatus(UserName) {
 
                                const getGitHtml = async () => {
                                     try {
-                                        return await axios.get(GitURL);
+                                        return await axios.get(GitURL, {
+											headers: {
+												'Set-Cookie': 'tz=Asia%2FSeoul'
+											}}, {
+												withCredentials: true											
+										});
                                     } catch (error) {
                                         console.error(error);
                                     }
