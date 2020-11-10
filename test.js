@@ -25,6 +25,8 @@ const config = require('./Config/dbInfo');
 app.post('/gitTest', (req, res) => {
     let gitURL = req.body.gitURL;
 
+    
+
     console.log("시간 : " + new Date());
 
     CompareCommitStatus("태민").then(function(resultMessage) {
