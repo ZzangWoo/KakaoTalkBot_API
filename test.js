@@ -60,7 +60,7 @@ function GitCommitLogSelect(StartDate, EndDate) {
                                console.log('[sp 접근 실패]');
                                console.log(err);
                            } else {
-                               console.log("psp 접근 성공]");
+                               console.log("[sp 접근 성공]");
 
                                if (recordsets.recordset.length == 0) {
                                    console.log(recordsets);
@@ -68,14 +68,23 @@ function GitCommitLogSelect(StartDate, EndDate) {
                                    return;
                                }
 
-                               let resultMessage = '';
+							   let resultMessage = '';
+							   let dateCriteria = '';
 
                                for (var idx in recordsets.recordset) {
-                                   resultMessage += '닉네임 : ' + recordsets.recordset[idx].UserName + '\n';
-                                   resultMessage += '인증시간 : ' + recordsets.recordset[idx].CertifiedDate + '\n\n';
+								   if (dateCriteria != recordsets.recordset[idx].CertifiedDate) {
+									   dateCriteria = recordsets.recordset[idx].CertifiedDate;
+									   
+									   resultMessage += '[' + recordsets.recordset[idx].CertifiedDate + ' 리스트]\n';
+									   resultMessage += '닉네임 : ' + recordsets.recordset[idx].UserName + '\n';
+                                   	   resultMessage += '인증시간 : ' + recordsets.recordset[idx].CertifiedDate + '\n\n';
+								   	} else {
+										resultMessage += '닉네임 : ' + recordsets.recordset[idx].UserName + '\n';
+                                   		resultMessage += '인증시간 : ' + recordsets.recordset[idx].CertifiedDate + '\n\n';
+									}
                                }
 
-                               console.log(recordsets.recordset);
+                               console.log(resultMessage);
 
                                resolve(resultMessage)
                            }
