@@ -735,23 +735,23 @@ app.get('/getRequest', (req, res) => {
 
 	//#region ## 깃 허브 커밋 단톡방 관련 명령어
 
-	else if (command == "인증") {
-		if (room.indexOf('잔디') != -1) {
-			CompareCommitStatus(from).then(function(resultMessage) {
-				res.status(200).json(
-					{
-						"Message": resultMessage
-					}
-				);
-			})
-		} else {
-			res.status(200).json(
-				{
-					"Message": "해당 방에서는 사용할 수 없는 기능입니다."
-				}
-			);
-		}
-	}
+	// else if (command == "인증") {
+	// 	if (room.indexOf('잔디') != -1) {
+	// 		CompareCommitStatus(from).then(function(resultMessage) {
+	// 			res.status(200).json(
+	// 				{
+	// 					"Message": resultMessage
+	// 				}
+	// 			);
+	// 		})
+	// 	} else {
+	// 		res.status(200).json(
+	// 			{
+	// 				"Message": "해당 방에서는 사용할 수 없는 기능입니다."
+	// 			}
+	// 		);
+	// 	}
+	// }
 
 	//#endregion
 
