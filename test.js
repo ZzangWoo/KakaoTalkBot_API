@@ -32,9 +32,24 @@ app.post('/gitTest', (req, res) => {
             {
                 "Message": resultMessage
             }
-        );
-    });
+        )
+    })
 })
+
+function GitCommitLogSelect(StartDate, EndDate) {
+
+    return new Promise(function(resolve, reject) {
+        const connection = sql.connect(config, (err) => {
+            if (err) {
+                console.log("[DB 연동 실패]");
+                console.log(err);
+            } else {
+                console.log("[DB 연동 성공]");
+            }
+        });
+    });
+
+}
 
 function CompareCommitStatus(UserName) {
 

@@ -11,6 +11,8 @@ let SubscribeCommand = [
 	}
 ];
 
+
+
 // API 생성을 위한 모듈 가져오기
 const express = require('express');
 const app = express();
@@ -379,10 +381,10 @@ app.get('/getRequest', (req, res) => {
 	// 명령어 검색 사용
 	if (command == "명령어") {
 		console.log("사용 가능 명령어 정보 요청");
-		console.log("테스트 : " + returnCommandList());
+		console.log("방이름 : " + room);
 		res.status(200).json(
 			{
-				"Message": returnCommandList()
+				"Message": returnCommandList(room)
 			}
 		);
 	}
@@ -735,23 +737,29 @@ app.get('/getRequest', (req, res) => {
 
 	//#region ## 깃 허브 커밋 단톡방 관련 명령어
 
-	// else if (command == "인증") {
-	// 	if (room.indexOf('잔디') != -1) {
-	// 		CompareCommitStatus(from).then(function(resultMessage) {
-	// 			res.status(200).json(
-	// 				{
-	// 					"Message": resultMessage
-	// 				}
-	// 			);
-	// 		})
-	// 	} else {
-	// 		res.status(200).json(
-	// 			{
-	// 				"Message": "해당 방에서는 사용할 수 없는 기능입니다."
-	// 			}
-	// 		);
-	// 	}
-	// }
+	//#region ### /인증 기능
+	else if (command == "인증") {
+		if (room.indexOf('잔디') != -1) {
+			CompareCommitStatus(from).then(function(resultMessage) {
+				res.status(200).json(
+					{
+						"Message": resultMessage
+					}
+				);
+			})
+		} else {
+			res.status(200).json(
+				{
+					"Message": "해당 방에서는 사용할 수 없는 기능입니다."
+				}
+			);
+		}
+	}
+	//#endregion
+
+	else if (command == "인증확인") {
+
+	}
 
 	//#endregion
 
@@ -818,15 +826,15 @@ app.get('/getRequest', (req, res) => {
 
 	//#endregion
 
-	else if (command == "테스트") {
-		console.log("테스트중")
+	// else if (command == "테스트") {
+	// 	console.log("테스트중")
 
-		res.status(200).json(
-			{
-				"Message": "구독자에게 메세지 보내기 테스트"
-			}
-		);
-	}
+	// 	res.status(200).json(
+	// 		{
+	// 			"Message": "구독자에게 메세지 보내기 테스트"
+	// 		}
+	// 	);
+	// }
 
 	//#region ## 기타기능
 
@@ -853,6 +861,15 @@ app.get('/getRequest', (req, res) => {
 				"Message": anniversaryMessage
 			}
 		);
+	}
+
+	else if (command == "시간테스트") {
+		process.env.TZ = 'Asia/Seoul';
+		res.status(200).json(
+			{
+				"Message": new Date()
+			}
+		)
 	}
 
 	//#endregion

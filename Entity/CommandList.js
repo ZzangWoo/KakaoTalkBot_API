@@ -1,6 +1,6 @@
 //#region # 버전 관리 및 업데이트 날짜
-let UpdateVersion = '(Ver 1.0.3)';
-let UpdateDate = '[lastUpdate : 2020-10-20]';
+let UpdateVersion = '(Ver 1.0.4)';
+let UpdateDate = '[lastUpdate : 2020-11-08]';
 
 //#region # 일반 명령어 정리
 
@@ -32,6 +32,21 @@ let SubscribeCommandList = '[구독 관련 명령어]\n'
 
 //#endregion
 
+//#region # 잔디방 관련 명령어 정리
+
+let GitCommitRoomCommandList = '[잔디방 관련 명령어]\n'
++ '-----------------------------------\n'
++ '잔디방에서만 사용가능한 명령어에요\n'
++ '-----------------------------------\n'
++ '1. 커밋 인증\n'
++ '예시) /인증\n'
++ '2. 당일 인증내역 확인\n'
++ '예시) /인증확인\n'
++ '3. 일정기간 동안의 인증내역 확인\n'
++ '예시) /인증확인 2020-10-01 2020-10-15';
+
+//#endregion
+
 //#region # 기타 기능 명령어 정리
 
 let ETCCommandList = '[기타 명령어]\n'
@@ -40,13 +55,24 @@ let ETCCommandList = '[기타 명령어]\n'
 
 //#endregion
 
-function returnCommandList() {
+function returnCommandList(room) {
+    console.log(room + '에서 명령어 호출');
     let wholeCommand = '*********************************\n'
     + '둥봇에게 사용 가능한 명령어\n'
     + UpdateVersion + '\n'
     + '*********************************\n\n'
-    + NormalCommandList + '\n\n'
-    + SubscribeCommandList + '\n\n'
+    + NormalCommandList + '\n\n';
+    if (!room) {
+        wholeCommand += SubscribeCommandList + '\n\n';
+    } else {
+        if (room.indexOf('잔디') != -1) {
+            wholeCommand += GitCommitRoomCommandList + '\n\n';
+        } else {
+            wholeCommand += SubscribeCommandList + '\n\n';
+        }
+    }
+    
+    wholeCommand += ''
     + ETCCommandList + '\n\n'
     + UpdateDate;
 
