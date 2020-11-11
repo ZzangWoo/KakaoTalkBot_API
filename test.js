@@ -32,9 +32,7 @@ app.post('/gitTest', (req, res) => {
     let StartDate = '2020-11-09';
     let EndDate = '2020-11-10';
 
-    let UserName = '둥이';
-
-    CompareCommitStatus(UserName).then(function(resultMessage) {
+    GitCommitLogSelect(StartDate, EndDate).then(function(resultMessage) {
         res.status(200).json(
             {
                 "Message": resultMessage
@@ -43,28 +41,6 @@ app.post('/gitTest', (req, res) => {
     })
 })
 
-app.post('/getCookieTest', (req, res) => {
-    const request = require('request');
-
-    request.get('https://www.naver.com', function (error, response, body) {
-        if (!error && response.statusCode == 200) {
-            console.log(response.headers);
-        }
-    });
-})
-
-app.post('/headerTest', (req, res) => {
-
-    makeHeadRequest();
-
-})
-
-async function makeHeadRequest() {
-    let result = await axios.head('https://github.com/ZzangWoo');
-
-    console.log(result);
-    
-}
 
 function GitCommitLogSelect(StartDate, EndDate) {
 
@@ -148,32 +124,12 @@ function CompareCommitStatus(UserName) {
 
                                const getGitHtml = async () => {
                                     try {
-                                        var tough = require('tough-cookie');
-
-                                        let cookie = new tough.Cookie({
-                                            tz: "Asia%2FSeoul"
-                                        });
-
-                                        var cookieJar = new tough.CookieJar();
-                                        cookieJar.setCookie(cookie, GitURL);
-
-                                        axios.defaults.withCredentials = true;
-
                                         return await axios.get(GitURL, {
-                                            jar: cookieJar
-                                        },
-                                        {
-                                            withCredentials: true
-                                        });
-
-                                        // return await axios.get(GitURL, {
-										// 	headers: {
-										// 		'Set-Cookie': 'tz=Asia%2FSeoul; Secure=no'
-										// 	}}, {
-										// 		withCredentials: true											
-										// }).then(resp => {
-                                        //     console.log(resp.headers);
-                                        // });
+											headers: {
+												'Set-Cookie': 'tz=Asia%2FSeoul'
+											}}, {
+												withCredentials: true											
+										});
                                     } catch (error) {
                                         console.error(error);
                                     }

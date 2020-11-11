@@ -17,7 +17,6 @@
     "mssql": "^6.2.1",
     "node-cron": "^2.0.3",
     "tedious": "^9.2.1",
-    "tough-cookie": "^4.0.0",
     "uuid": "^3.2.1"
   },
   "main": "index.js",

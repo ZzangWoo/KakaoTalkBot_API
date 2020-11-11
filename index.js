@@ -1272,23 +1272,12 @@ function CompareCommitStatus(UserName) {
 
                                const getGitHtml = async () => {
                                     try {
-                                        var tough = require('tough-cookie');
-
-                                        let cookie = new tough.Cookie({
-                                            tz: "Asia%2FSeoul"
-                                        });
-
-                                        var cookieJar = new tough.CookieJar();
-                                        cookieJar.setCookie(cookie, GitURL);
-
-                                        axios.defaults.withCredentials = true;
-
                                         return await axios.get(GitURL, {
-                                            jar: cookieJar
-                                        },
-                                        {
-                                            withCredentials: true
-                                        });
+											headers: {
+												'Set-Cookie': 'tz=Asia%2FSeoul'
+											}}, {
+												withCredentials: true											
+										});
                                     } catch (error) {
                                         console.error(error);
                                     }
