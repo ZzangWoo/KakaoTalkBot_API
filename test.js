@@ -25,14 +25,12 @@ const config = require('./Config/dbInfo');
 app.post('/gitTest', (req, res) => {
     let gitURL = req.body.gitURL;
 
-    
-
-    console.log("시간 : " + new Date());
-
     let StartDate = '2020-11-09';
     let EndDate = '2020-11-10';
 
-    GitCommitLogSelect(StartDate, EndDate).then(function(resultMessage) {
+    let UserName = '둥이';
+
+    CompareCommitStatus(UserName).then(function(resultMessage) {
         res.status(200).json(
             {
                 "Message": resultMessage
@@ -121,15 +119,12 @@ function CompareCommitStatus(UserName) {
                                }
 
                                let GitURL = recordsets.recordset[0].GitURL;
+                               let GitNickName = GitURL.split('/')[3];
+                               let CommitURL = 'https://github.com/users/' + GitNickName + '/contributions?to=' + moment().format('YYYY-MM-DD');
 
                                const getGitHtml = async () => {
                                     try {
-                                        return await axios.get(GitURL, {
-											headers: {
-												'Set-Cookie': 'tz=Asia%2FSeoul'
-											}}, {
-												withCredentials: true											
-										});
+                                        return await axios.get(CommitURL);
                                     } catch (error) {
                                         console.error(error);
                                     }

@@ -1269,15 +1269,12 @@ function CompareCommitStatus(UserName) {
                                }
 
                                let GitURL = recordsets.recordset[0].GitURL;
+                               let GitNickName = GitURL.split('/')[3];
+                               let CommitURL = 'https://github.com/users/' + GitNickName + '/contributions?to=' + moment().format('YYYY-MM-DD');
 
                                const getGitHtml = async () => {
                                     try {
-                                        return await axios.get(GitURL, {
-											headers: {
-												'Set-Cookie': 'tz=Asia%2FSeoul'
-											}}, {
-												withCredentials: true											
-										});
+                                        return await axios.get(CommitURL);
                                     } catch (error) {
                                         console.error(error);
                                     }
