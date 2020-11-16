@@ -1197,7 +1197,11 @@ function CompareCommitStatus(UserName) {
                                     try {
                                         return await axios.get(CommitURL);
                                     } catch (error) {
-                                        console.error(error);
+										console.error(error);
+										let errorMessage = "";
+										errorMessage += "[인증 실패]\n";
+										errorMessage += "해당 날짜에는 Github에서 커밋 정보를 주질않아서 인증이 불가능해요...(훌쩍)(훌쩍)";
+										resolve(errorMessage);
                                     }
                                 };
                         
