@@ -1190,8 +1190,9 @@ function CompareCommitStatus(UserName) {
                                }
 
                                let GitURL = recordsets.recordset[0].GitURL;
-                               let GitNickName = GitURL.split('/')[3];
-                               let CommitURL = 'https://github.com/users/' + GitNickName + '/contributions?to=' + moment().format('YYYY-MM-DD');
+							   let GitNickName = GitURL.split('/')[3];
+							   //?to=' + moment().format('YYYY-MM-DD')
+                               let CommitURL = 'https://github.com/users/' + GitNickName + '/contributions';
 
                                const getGitHtml = async () => {
                                     try {
