@@ -761,6 +761,7 @@ app.get('/getRequest', (req, res) => {
 	}
 	//#endregion
 
+	//#region ### 인증확인
 	else if (command == "인증확인") {
 		console.log('param1 : ' + param1 + '\nparam2 : ' + param2 + '\n');
 		if (room.indexOf('잔디') != -1 || from == '조창우') {
@@ -794,7 +795,32 @@ app.get('/getRequest', (req, res) => {
 				}
 			);
 		}
+		
 	}
+	//#endregion
+
+	//#region ### 인증이벤트 시작시간 끝시간 최소횟수
+
+	else if (command == "인증이벤트") {
+		console.log('StartDate : ' + param1 + '\nEndDate : ' + param2 + '\nLeastCount : ' + param3);
+		if (room.indexOf('잔디') != -1 || from == '조창우') {
+			GitCommitEvent(param1, param2, param3).then(function(resultMesage) {
+				res.status(200).json(
+					{
+						"Message": resultMesage
+					}
+				);
+			})
+		} else {
+			res.status(200).json (
+				{
+					"Message": "해당 방에서는 사용할 수 없는 기능입니다."
+				}
+			);
+		}
+	}
+
+	//#endregion
 
 	//#endregion
 
@@ -1190,6 +1216,59 @@ function GitCommitLogSelect(StartDate, EndDate) {
         });
     });
 
+}
+
+//#endregion
+
+//#region ## 인증 이벤트 메서드
+
+function GitCommitEvent(StartDate, EndDate, LeastCount) {
+	return new Promise(function(resolve, reject) {
+		const connection = sql.connect(config, (err) => {
+			if (err) {
+				console.log("[DB 연동 실패]");
+				console.log(err);
+			} else {
+				console.log("[DB 연동 성공]");
+
+				const request = connection.request();
+				request.input('StartDate', sql.NVarChar(50), StartDate)
+					   .input('EndDate', sql.NVarChar(50), EndDate)
+					   .input('LeastCount', sql.Int, LeastCount)
+					   .execute('GitCommitEvent', (err, recordsets, returnValue) => {
+						   if (err) {
+							   console.log("[SP 접근 실패]");
+							   console.log(err);
+						   } else {
+							   console.log("[SP 접근 성공]");
+
+							   if (recordsets.recordset.length == 0) {
+								   resolve("[조회 실패]\n데이터가 잘못된거같아요 ㅠㅠ 금방 고칠게요");
+								   return;
+							   }
+
+							   let resultMessage = '';
+
+							   let count = 0;
+							   for (var idx in recordsets.recordset) {
+								   resultMessage += '[닉네임]\n';
+								   resultMessage += recordsets.recordset[idx].UserName + '\n';
+								   resultMessage += '인증횟수    상태\n';
+								   resultMessage += '     ' + recordsets.recordset[idx].LogCount + '         ' + recordsets.recordset[idx].Status + '\n';
+								   resultMessage += '---------------------------\n';
+								   count++;
+							   }
+
+							   let lastMessage = '[이벤트 결과] (총원 ' + count + '명)\n';
+							   lastMessage += '---------------------------\n';
+							   lastMessage += resultMessage;
+
+							   resolve(lastMessage);
+						   }
+					   })
+			}
+		})
+	})
 }
 
 //#endregion
