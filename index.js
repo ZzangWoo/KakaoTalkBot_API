@@ -46,6 +46,7 @@ const cheerio = require("cheerio");
 // 커스텀 모듈 가져오기
 const covid19 = require('./Function/Covid19');
 const weather = require('./Function/Weather');
+const gameModule = require('./Function/Game');
 
 app.get('/', (req, res) => {
 	res.send('둥봇 메인페이지입니다.\n');
@@ -821,6 +822,20 @@ app.get('/getRequest', (req, res) => {
 	}
 
 	//#endregion
+
+	//#endregion
+
+	//#region ## 게임 관련 명령어 처리
+
+	else if (command == "?") {
+		if (param1 = "숫자야구") {
+			res.status(200).json(
+				{
+					"Message": gameModule.HowToPlay("NumberBaseball")
+				}
+			);
+		}
+	}
 
 	//#endregion
 

@@ -1,6 +1,6 @@
 //#region # 버전 관리 및 업데이트 날짜
-let UpdateVersion = '(Ver 1.0.4)';
-let UpdateDate = '[lastUpdate : 2020-11-08]';
+let UpdateVersion = '(Ver 1.0.5)';
+let UpdateDate = '[lastUpdate : 2020-11-22]';
 
 //#region # 일반 명령어 정리
 
@@ -50,6 +50,16 @@ let GitCommitRoomCommandList = '[잔디방 관련 명령어]\n'
 
 //#endregion
 
+//#region # 게임 명령어 정리
+
+let GameCommandList = "[게임 명령어]\n"
++ "1. 숫자야구게임\n"
++ "예시) /숫자야구\n"
++ "2. 숫자야구게임 설명\n"
++ "예시) /? 숫자야구"
+
+//#endregion
+
 //#region # 기타 기능 명령어 정리
 
 let ETCCommandList = '[기타 명령어]\n'
@@ -76,6 +86,7 @@ function returnCommandList(room) {
     }
     
     wholeCommand += ''
+    + GameCommandList + '\n\n'
     + ETCCommandList + '\n\n'
     + UpdateDate;
 
