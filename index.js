@@ -370,6 +370,23 @@ app.post('/subscribe/covid19', (req, res) => {
 
 //#endregion
 
+//#region # 게임 관련 주소
+
+app.post('/numberBaseball', (req, res) => {
+	let NickName = req.body.NickName;
+	let RoomName = req.body.RoomName;
+
+	gameModule.GetNumberBaseballGameRanking(NickName, RoomName).then(function(resultMessage) {
+		res.status(200).json(
+			{
+				"Message": resultMessage
+			}
+		);
+	})
+})
+
+//#endregion
+
 //#region # 일반 명령어
 
 app.get('/getRequest', (req, res) => {
