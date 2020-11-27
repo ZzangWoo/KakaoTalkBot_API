@@ -51,7 +51,9 @@ module.exports.GetNumberBaseballGameRanking = function(Nickname, RoomName) {
 
                                     resultMessage += "[숫자야구 랭킹]\n";
                                     for (var idx in recordsets.recordset) {
-                                        resultMessage += (idx + 1).replace(/(^0+)/, "") + "위 ";
+                                        var rank = (Number(idx) + 1).toString();
+
+                                        resultMessage += rank.replace(/(^0+)/, "") + "위 ";
                                         resultMessage += recordsets.recordset[idx].NickName + " ";
                                         resultMessage += "(" + recordsets.recordset[idx].Point + "점)\n";
                                     }
