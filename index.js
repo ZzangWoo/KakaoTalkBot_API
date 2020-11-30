@@ -409,7 +409,7 @@ app.get('/getRequest', (req, res) => {
 				"Message": returnCommandList(room)
 			}
 		);
-	}
+	} 
 
 	//#region ## 날씨 관련 분기처리
 
