@@ -2,7 +2,7 @@ const puppeteer = require('puppeteer');
 const moment = require('moment');
 const fs = require('fs');
 
-const timestamp = moment().format('YYYY-MM-DD-HH-mm-ss-SSS');
+const timestamp = moment().format('YYYY-MM-DD');
 const selector = 'div.js-yearly-contributions > div.position-relative';
 
 // Creates a directory if it doesn't exist.
