@@ -16,6 +16,7 @@
     "moment-timezone": "^0.5.31",
     "mssql": "^6.2.1",
     "node-cron": "^2.0.3",
+    "puppeteer": "^5.5.0",
     "tedious": "^9.2.1",
     "uuid": "^3.2.1"
   },
