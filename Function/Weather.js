@@ -75,7 +75,7 @@ module.exports.GetWeather = function (from, city, gu, dong) {
 											"T3H": "", // 현재기온 (도)
 											"TMN": "", // 아침 최저기온 (도)
 											"TMX": "" // 낮 최고온도 (도)
-										}; 
+										};
 		  
 										var weatherData = JSON.parse(response.body).response.body.items.item;
 		
